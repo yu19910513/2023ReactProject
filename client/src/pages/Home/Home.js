@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import TestService from "../../services/TestService";
-import { v4 as uuidv4 } from 'uuid';
+import NavbarComponent from "../../components/NavBar/NavbarComponent"
 
 const Home = () => {
   const [users, setUsers] = useState([]);
@@ -21,6 +21,8 @@ const Home = () => {
   }, []);
   if (state === "error") return <h1>{error.toString()}</h1>;
   return (
+    <>
+    <NavbarComponent/>
     <div>
       <div>
         {state === "loading" ? (
@@ -38,6 +40,7 @@ const Home = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 export default Home;
