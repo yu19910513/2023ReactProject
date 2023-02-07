@@ -1,8 +1,8 @@
 import http from "../common/http-common";
 
-class TutorialDataService {
+class TestService {
   getAll() {
-    return http.get("/tutorials");
+    return http.get("/test");
   }
 
   get(id) {
@@ -30,4 +30,4 @@ class TutorialDataService {
   }
 }
 
-export default new TutorialDataService();
+export default new TestService();

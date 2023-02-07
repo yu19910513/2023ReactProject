@@ -7,6 +7,7 @@ const containerRoutes = require('./container-route.js');
 const itemRoutes = require('./item-route');
 const recordRoutes = require('./record-route');
 const documentRoutes = require('./document-route');
+const testRoutes = require('./test-route');
 
 router.use('/user', userRoutes);
 router.use('/box', boxRoutes);
@@ -15,5 +16,6 @@ router.use('/batch', batchRoutes);
 router.use('/item', itemRoutes);
 router.use('/container', containerRoutes);
 router.use('/record', recordRoutes);
-router.use('/document', documentRoutes)
+router.use('/document', documentRoutes);
+router.use("/test", testRoutes);
 module.exports = router;
