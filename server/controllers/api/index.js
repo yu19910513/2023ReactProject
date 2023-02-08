@@ -8,8 +8,9 @@ const itemRoutes = require('./item-route');
 const recordRoutes = require('./record-route');
 const documentRoutes = require('./document-route');
 const testRoutes = require('./test-route');
+const user_routes = require('./user-routes');
 
-router.use('/user', userRoutes);
+router.use('/user', user_routes);
 router.use('/box', boxRoutes);
 router.use('/account', accountRoutes);
 router.use('/batch', batchRoutes);
