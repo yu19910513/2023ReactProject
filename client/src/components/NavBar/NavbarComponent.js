@@ -11,6 +11,7 @@ import Logo from "../../media/logo.png";
 import Login from "../Logging/Login";
 import Logout from "../Logging/Logout";
 import authService from "../../services/AuthService";
+import Profile from "../../pages/Profile/Profile";
 
 function NavbarComponent() {
   const [login, setLogin] = useState(false);
@@ -36,6 +37,12 @@ function NavbarComponent() {
             <Nav className="mr-auto">
               <Nav.Link href="/">Home</Nav.Link>
               <NavDropdown title="Account" id="account-nav-dropdown">
+                {login ? <Profile /> : null}
+                {login ? (
+                  <NavDropdown.Item href="/history">
+                    Order History
+                  </NavDropdown.Item>
+                ) : null}
                 {login ? <Logout /> : <Login />}
                 {login ? null : (
                   <NavDropdown.Item href="/signup">Sign Up</NavDropdown.Item>

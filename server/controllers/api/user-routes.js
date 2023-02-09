@@ -15,10 +15,7 @@ router.post("/login", async (req, res) => {
       return res.status(400).send({ error: "password is incorrect" });
     }
     const token = signToken(user);
-    const userData = new Object();
-    userData.id = user.id;
-    userData.name = user.name;
-    res.send({ token, userData });
+    res.send({ token, user });
   } catch (err) {
     console.log(err);
     res.status(500).send({ error: "Error during login" });

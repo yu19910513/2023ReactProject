@@ -6,7 +6,7 @@ import {
   Container,
   NavDropdown,
 } from "react-bootstrap";
-import AuthService from "../../services/AuthService";
+import authService from "../../services/AuthService";
 
 
 const Login = () => {
@@ -20,13 +20,12 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(`Email: ${email} Password: ${password}`);
-    AuthService.logIn({ email, password })
+    authService.logIn({ email, password })
       .then((res) => {
-        console.log(res.data);
         localStorage.setItem("token", res.data.token);
+        authService.setData(res.data.user)
         handleClose();
-        window.location.reload(false);
-        // window.location.replace("/signup");
+        window.location.replace(`/profile/${res.data.user.id}`);
       })
       .catch((err) => {
         console.log(err.response.data.error);
