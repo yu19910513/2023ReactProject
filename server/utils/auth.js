@@ -1,21 +1,40 @@
-const withAuth = (req, res, next) => {
-    if (!req.session.user_id) {
-      res.redirect('/login');
-    } else {
-      next();
-    }
-  };
+const jwt = require("jsonwebtoken");
+const secret = process.env.JWT_SECRET;
+const expiration = "2h";
 
-const adminAuth = (req, res, next) => {
-    if (!req.session.admin) {
-      withAuth(req, res, next)
-    } else {
-      next();
-    }
+const authenticate = (req, res, next) => {
+  const token = req.header('Authorization');
+  if (!token) {
+    return res.status(401).send('Access Denied');
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(400).send('Invalid Token');
+  }
 };
 
+const signToken = ({ email, id, admin }) => {
+  const payload = { email, id, admin };
+  return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
+};
 
-  module.exports = {withAuth, adminAuth};
+const withAuth = (req, res, next) => {
+  if (!req.session.user_id) {
+    res.redirect("/login");
+  } else {
+    next();
+  }
+};
 
+const adminAuth = (req, res, next) => {
+  if (!req.session.admin) {
+    withAuth(req, res, next);
+  } else {
+    next();
+  }
+};
 
-  //notes: user logged in, session.admin = false; user not logged in, session.admin = undefined;
+module.exports = { withAuth, adminAuth, authenticate, signToken };

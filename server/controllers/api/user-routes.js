@@ -1,36 +1,38 @@
 const router = require("express").Router();
-const jwt = require('jsonwebtoken');
-const { User, Account, Batch, Box, Container } = require("../../models");
-const { withAuth, adminAuth } = require("../../utils/auth");
+const { User } = require("../../models");
+const { signToken } = require("../../utils/auth");
 const bcrypt = require("bcrypt");
 
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(400).send({ error: "Email or password is incorrect" });
+      return res.status(400).send({ error: "Email is incorrect" });
     }
-
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).send({ error: "Email or password is incorrect" });
+      return res.status(400).send({ error: "password is incorrect" });
     }
-
-    const token = jwt.sign(
-      { id: user.id, admin: user.admin },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
-    );
-
-    res.send({ token });
+    const token = signToken(user);
+    const userData = new Object();
+    userData.id = user.id;
+    userData.name = user.name;
+    res.send({ token, userData });
   } catch (err) {
     console.log(err);
     res.status(500).send({ error: "Error during login" });
   }
 });
+
+// router.get("/:id", async (req, res) => {
+//   try {
+//     const user = await User.findByPk(req.params.id);
+//     if (!user) return res.status(400).send("User not found");
+//     res.send(user);
+//   } catch (error) {
+//     res.status(500).send(error.message);
+//   }
+// });
 
 module.exports = router;

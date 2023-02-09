@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Navbar,
   Nav,
@@ -8,10 +8,15 @@ import {
   Container,
 } from "react-bootstrap";
 import Logo from "../../media/logo.png";
-import Login from "../Login/Login";
-// import isLoggedIn from "../../auth/isLoggedIn";
+import Login from "../Logging/Login";
+import Logout from "../Logging/Logout";
+import authService from "../../services/AuthService";
 
 function NavbarComponent() {
+  const [login, setLogin] = useState(false);
+  useEffect(() => {
+    setLogin(authService.loggedIn());
+  }, []);
   return (
     <>
       <Navbar bg="light" expand="lg">
@@ -26,14 +31,15 @@ function NavbarComponent() {
             />
             {" SQUIDIO"}
           </NavbarBrand>
-
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
               <Nav.Link href="/">Home</Nav.Link>
-                <NavDropdown title="Account" id="account-nav-dropdown">
-                <Login/>
-                <NavDropdown.Item href="/signup">Sign Up</NavDropdown.Item>
+              <NavDropdown title="Account" id="account-nav-dropdown">
+                {login ? <Logout /> : <Login />}
+                {login ? null : (
+                  <NavDropdown.Item href="/signup">Sign Up</NavDropdown.Item>
+                )}
               </NavDropdown>
               <NavDropdown title="Collection" id="collection-nav-dropdown">
                 <NavDropdown.Item href="/product/soap">Soaps</NavDropdown.Item>

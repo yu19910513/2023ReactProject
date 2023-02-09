@@ -6,9 +6,10 @@ import {
   Container,
   NavDropdown,
 } from "react-bootstrap";
-import UserService from "../../services/UserService";
+import AuthService from "../../services/AuthService";
 
-const Login = (props) => {
+
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -19,10 +20,13 @@ const Login = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(`Email: ${email} Password: ${password}`);
-    UserService.logIn({ email, password })
+    AuthService.logIn({ email, password })
       .then((res) => {
+        console.log(res.data);
         localStorage.setItem("token", res.data.token);
         handleClose();
+        window.location.reload(false);
+        // window.location.replace("/signup");
       })
       .catch((err) => {
         console.log(err.response.data.error);

@@ -8,17 +8,17 @@ const SignUp = () => {
     password: "",
     email: "",
     address: "",
-    age: ""
+    age: "",
   });
 
-  const handleChange = event => {
+  const handleChange = (event) => {
     setFormData({
       ...formData,
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     });
   };
 
-  const handleSubmit = event => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     // send the formData to the backend or a mock API for testing purposes
     console.log(formData);
