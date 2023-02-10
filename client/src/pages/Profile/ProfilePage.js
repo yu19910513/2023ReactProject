@@ -5,7 +5,7 @@ import NavbarComponent from "../../components/Navbar/NavbarComponent";
 import userService from "../../services/UserService";
 import authService from "../../services/AuthService";
 
-const UserProfile = () => {
+const UserProfile = (props) => {
   const { id } = useParams();
   const [authorized, authenticate] = useState(false);
   const [user, setUser] = useState({});
@@ -14,21 +14,20 @@ const UserProfile = () => {
     // Check if the user is logged in by checking local storage for a token
     const token = localStorage.getItem("token");
     if (token && !authService.isTokenExpired(token)) {
-      authenticate(true);
       userService
         .getOwner(id)
         .then((res) => {
+          authenticate(true);
           setUser(res.data);
         })
         .catch((error) => {
           console.error(error);
           authenticate(false);
         });
+    } else {
+        window.location.replace("/")
     }
   }, [id]);
-  if (!authorized) {
-    // window.location.replace("/")
-  }
   return (
     <>
       <NavbarComponent />
@@ -40,7 +39,7 @@ const UserProfile = () => {
           <Col xs={9}>
             <h3>{user.name}</h3>
             <Badge variant="secondary">Software Engineer</Badge>
-            <p>Password: {user.password}</p>
+            {authorized? (<p>Password: {user.password}</p>):(null)}
           </Col>
         </Row>
       </Container>
