@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { User } = require("../../models");
-const { signToken } = require("../../utils/auth");
+const { signToken, authenticate } = require("../../utils/auth");
 const bcrypt = require("bcrypt");
 
 router.post("/login", async (req, res) => {
@@ -21,6 +21,56 @@ router.post("/login", async (req, res) => {
     res.status(500).send({ error: "Error during login" });
   }
 });
+
+// router.get('/profile/:id', (req, res) => {
+//   const token = req.headers.authorization.split(' ')[1];
+//   try {
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     User.findByPk(req.params.id)
+//       .then(user => {
+//         if (!user) {
+//           return res.status(404).send({ message: 'User not found' });
+//         }
+//         if (user.id !== decoded.id) {
+//           return res.status(401).send({ message: 'Unauthorized access' });
+//         }
+//         res.send({
+//           id: user.id,
+//           name: user.name,
+//           username: user.username,
+//           password: user.password
+//         });
+//       });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(401).send({ message: 'Unauthorized access' });
+//   }
+// });
+
+router.get('/owner/:id', authenticate, (req, res) => {
+  try {
+    User.findByPk(req.params.id)
+      .then(user => {
+        if (!user) {
+          return res.status(404).send({ message: 'User not found' });
+        }
+        console.log(req.body);
+        if (user.id !== req.body.data.id) {
+          return res.status(401).send({ message: `Unauthorized access` });
+        }
+        res.send({
+          id: user.id,
+          name: user.name,
+          username: user.username,
+          password: user.password
+        });
+      });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: 'Unauthorized access' });
+  }
+});
+
 
 // router.get("/:id", async (req, res) => {
 //   try {

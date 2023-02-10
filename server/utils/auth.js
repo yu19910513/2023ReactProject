@@ -3,16 +3,17 @@ const secret = process.env.JWT_SECRET;
 const expiration = "2h";
 
 const authenticate = (req, res, next) => {
-  const token = req.header('Authorization');
+  const token = req.headers.authorization.split(" ")[1];
   if (!token) {
-    return res.status(401).send('Access Denied');
+    return res.status(401).send("Access Denied");
   }
   try {
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    req.user = decoded;
+    const decoded = jwt.verify(token, secret);
+    req.body = decoded;
     next();
   } catch (error) {
-    res.status(400).send('Invalid Token');
+    console.log(error);
+    res.status(400).send("Invalid Token");
   }
 };
 
