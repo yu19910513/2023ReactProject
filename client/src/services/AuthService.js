@@ -35,10 +35,10 @@ class AuthService {
     window.location.assign(`/profile/${data.user.id}`);
   }
 
-/**
- * need to call loggedIn() first whenever the following getters are used, otherwise may trigger error if toekn does not exist
- * @returns
- */
+  /**
+   * need to call loggedIn() first whenever the following getters are used, otherwise may trigger error if toekn does not exist
+   * @returns
+   */
   getName() {
     return this.getProfile().data.name;
   }
@@ -52,9 +52,17 @@ class AuthService {
   }
 
   isOwner(id) {
-    if (this.loggedIn() && this.getUserId() == id){
+    if (this.loggedIn() && this.getUserId() === parseInt(id)) {
       return true;
-    } return false;
+    }
+    return false;
+  }
+
+  isAdmin() {
+    if (this.loggedIn() && this.getAdmin()) {
+      return true;
+    }
+    return false;
   }
 
   logIn(data) {

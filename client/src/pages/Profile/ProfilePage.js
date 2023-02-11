@@ -34,7 +34,7 @@ const UserProfile = (props) => {
           <Col xs={9}>
             <h3>{user.name}</h3>
             <Badge variant="secondary">Software Engineer</Badge>
-            {user.password}
+            <h4>Admin Privilage: {authService.isAdmin()?("Yes"):("No")}</h4>
           </Col>
         </Row>
       </Container>
