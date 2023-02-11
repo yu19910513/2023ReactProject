@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { User } = require("../../models");
 const { signToken, authenticate } = require("../../utils/auth");
 const bcrypt = require("bcrypt");
+const secret = process.env.ADMIN_SECRET;
 
 router.post("/login", async (req, res) => {
   try {
@@ -15,10 +16,26 @@ router.post("/login", async (req, res) => {
       return res.status(400).send({ error: "password is incorrect" });
     }
     const token = signToken(user);
-    res.send({ token, user });
+    res.send({ token });
   } catch (err) {
     console.log(err);
     res.status(500).send({ error: "Error during login" });
+  }
+});
+router.post("/signup", (req, res) => {
+  try {
+    req.body.adminSecret != secret
+      ? (req.body.admin = false)
+      : (req.body.admin = true);
+    User.create({
+      ...req.body,
+    }).then((user) => {
+      const token = signToken(user);
+      res.send({ token });
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
   }
 });
 
@@ -47,30 +64,23 @@ router.post("/login", async (req, res) => {
 //   }
 // });
 
-router.get('/owner/:id', authenticate, (req, res) => {
+router.get("/owner/:id", authenticate, (req, res) => {
   try {
-    User.findByPk(req.params.id)
-      .then(user => {
-        if (!user) {
-          return res.status(404).send({ message: 'User not found' });
-        }
-        console.log(req.body);
-        if (user.id !== req.body.data.id) {
-          return res.status(401).send({ message: `Unauthorized access` });
-        }
-        res.send({
-          id: user.id,
-          name: user.name,
-          username: user.username,
-          password: user.password
-        });
-      });
+    User.findByPk(req.params.id).then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "User not found" });
+      }
+      console.log(req.body);
+      if (user.id !== req.body.data.id && !user.admin) {
+        return res.status(401).send({ message: `Unauthorized access` });
+      }
+      res.send(user);
+    });
   } catch (error) {
     console.error(error);
-    return res.status(500).send({ message: 'Unauthorized access' });
+    return res.status(500).send({ message: "Unauthorized access" });
   }
 });
-
 
 // router.get("/:id", async (req, res) => {
 //   try {

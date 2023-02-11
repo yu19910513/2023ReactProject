@@ -32,7 +32,7 @@ class AuthService {
 
   signIn(data) {
     localStorage.setItem("token", data.token);
-    window.location.assign(`/profile/${data.user.id}`);
+    window.location.assign(`/profile/${this.getUserId()}`);
   }
 
   /**
@@ -52,7 +52,7 @@ class AuthService {
   }
 
   isOwner(id) {
-    if (this.loggedIn() && this.getUserId() === parseInt(id)) {
+    if (this.loggedIn() && (this.getUserId() === parseInt(id) || this.isAdmin())) {
       return true;
     }
     return false;
@@ -67,6 +67,10 @@ class AuthService {
 
   logIn(data) {
     return http.post("/user/login", data);
+  }
+
+  signUp(data) {
+    return http.post("/user/signUp", data);
   }
 
   logout() {

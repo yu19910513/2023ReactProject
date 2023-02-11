@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
+import authService from "../../services/AuthService";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
     name: "",
-    username: "",
-    password: "",
     email: "",
-    address: "",
-    age: "",
+    password: "",
+    confirmedPassword: "",
+    adminSecret: "",
   });
 
   const handleChange = (event) => {
@@ -18,9 +18,28 @@ const SignUp = () => {
     });
   };
 
+  const isFormValid = (data) => {
+    if (
+      data.name.length > 0 &&
+      data.email.length > 0 &&
+      data.password.length > 0 &&
+      data.password === data.confirmedPassword
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // send the formData to the backend or a mock API for testing purposes
+    authService
+      .signUp(formData)
+      .then((res) => {
+        authService.signIn(res.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data.error);
+      });
     console.log(formData);
   };
 
@@ -38,13 +57,14 @@ const SignUp = () => {
             onChange={handleChange}
           />
         </Form.Group>
-        <Form.Group controlId="formUsername">
-          <Form.Label>Username</Form.Label>
+
+        <Form.Group controlId="formEmail">
+          <Form.Label>Email</Form.Label>
           <Form.Control
-            type="text"
-            placeholder="Enter username"
-            name="username"
-            value={formData.username}
+            type="email"
+            placeholder="Enter email"
+            name="email"
+            value={formData.email}
             onChange={handleChange}
           />
         </Form.Group>
@@ -58,37 +78,32 @@ const SignUp = () => {
             onChange={handleChange}
           />
         </Form.Group>
-        <Form.Group controlId="formEmail">
-          <Form.Label>Email</Form.Label>
+        <Form.Group controlId="formConfirmPassword">
+          <Form.Label>Confirm Password</Form.Label>
           <Form.Control
-            type="email"
-            placeholder="Enter email"
-            name="email"
-            value={formData.email}
+            type="password"
+            placeholder="Enter password again"
+            name="confirmedPassword"
+            value={formData.confirmedPassword}
+            onChange={handleChange}
+            disabled={formData.password.length < 1}
+          />
+        </Form.Group>
+        <Form.Group controlId="formAdminSecret">
+          <Form.Label>Admin Privilage (not common)</Form.Label>
+          <Form.Control
+            type="password"
+            placeholder="Enter admin code"
+            name="adminSecret"
+            value={formData.adminSecret}
             onChange={handleChange}
           />
         </Form.Group>
-        <Form.Group controlId="formAddress">
-          <Form.Label>Address</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          />
-        </Form.Group>
-        <Form.Group controlId="formAge">
-          <Form.Label>Age</Form.Label>
-          <Form.Control
-            type="number"
-            placeholder="Enter age"
-            name="age"
-            value={formData.age}
-            onChange={handleChange}
-          />
-        </Form.Group>
-        <Button variant="primary" type="submit">
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={!isFormValid(formData)}
+        >
           Submit
         </Button>
       </Form>
