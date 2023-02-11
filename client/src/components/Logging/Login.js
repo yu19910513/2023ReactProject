@@ -22,10 +22,8 @@ const Login = () => {
     console.log(`Email: ${email} Password: ${password}`);
     authService.logIn({ email, password })
       .then((res) => {
-        localStorage.setItem("token", res.data.token);
-        authService.setData(res.data.user)
         handleClose();
-        window.location.replace(`/profile/${res.data.user.id}`);
+        authService.signIn(res.data)
       })
       .catch((err) => {
         console.log(err.response.data.error);

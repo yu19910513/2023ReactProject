@@ -4,7 +4,6 @@ const {withAuth, adminAuth} = require('../../utils/auth');
 const bcrypt = require('bcrypt');
 
 router.get('/', async (req, res) => {
-  console.log("hi");
     try {
     const userDB = await User.findAll({
       order: [

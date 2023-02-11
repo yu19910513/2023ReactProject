@@ -17,8 +17,8 @@ const authenticate = (req, res, next) => {
   }
 };
 
-const signToken = ({ email, id, admin }) => {
-  const payload = { email, id, admin };
+const signToken = ({ email, id, name, admin }) => {
+  const payload = { email, id, name, admin };
   return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
 };
 

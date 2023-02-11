@@ -2,12 +2,6 @@ import decode from "jwt-decode";
 import http from "../common/http-common";
 
 class AuthService {
-  constructor() {
-    this.name = "";
-    this.email = "";
-    this.id = "";
-    this.admin = false;
-  }
   getProfile() {
     return decode(this.getToken());
   }
@@ -24,6 +18,7 @@ class AuthService {
     try {
       const decoded = decode(token);
       if (decoded.exp < Date.now() / 1000) {
+        localStorage.removeItem("token");
         return true;
       } else return false;
     } catch (err) {
@@ -35,55 +30,39 @@ class AuthService {
     return localStorage.getItem("token");
   }
 
-  getUserId() {
-    return localStorage.getItem("id");
+  signIn(data) {
+    localStorage.setItem("token", data.token);
+    window.location.assign(`/profile/${data.user.id}`);
   }
 
-  login(token, userId) {
-    localStorage.setItem("token", token);
-    localStorage.setItem("userId", userId);
-    window.location.assign(`/user/${userId}`);
-  }
-
-  setData(data) {
-    this.name = data.name;
-    this.id = data.id;
-    this.email = data.email;
-    this.admin = data.admin;
-    localStorage.setItem("name", this.name);
-    localStorage.setItem("id", this.id);
-  }
-
+/**
+ * need to call loggedIn() first whenever the following getters are used, otherwise may trigger error if toekn does not exist
+ * @returns
+ */
   getName() {
-    if (this.name === "") {
-      return localStorage.getItem("name");
-    }
-    return this.name;
+    return this.getProfile().data.name;
   }
 
-  getId() {
-    if (this.id === "") {
-      return localStorage.getItem("id");
-    }
-    return this.name;
+  getUserId() {
+    return parseInt(this.getProfile().data.id);
   }
 
   getAdmin() {
-    return this.admin;
+    return this.getProfile().data.admin;
   }
-  cleanData() {
-    this.name = "";
-    this.id = "";
-    this.email = "";
-    this.admin = false;
+
+  isOwner(id) {
+    if (this.loggedIn() && this.getUserId() == id){
+      return true;
+    } return false;
   }
 
   logIn(data) {
     return http.post("/user/login", data);
   }
+
   logout() {
     localStorage.removeItem("token");
-    this.cleanData();
     window.location.assign("/");
   }
 }

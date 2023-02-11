@@ -7,22 +7,17 @@ import authService from "../../services/AuthService";
 
 const UserProfile = (props) => {
   const { id } = useParams();
-  const [authorized, authenticate] = useState(false);
   const [user, setUser] = useState({});
 
   useEffect(() => {
-    // Check if the user is logged in by checking local storage for a token
-    const token = localStorage.getItem("token");
-    if (token && !authService.isTokenExpired(token)) {
+    if (authService.isOwner(id)) {
       userService
         .getOwner(id)
         .then((res) => {
-          authenticate(true);
           setUser(res.data);
         })
         .catch((error) => {
           console.error(error);
-          authenticate(false);
         });
     } else {
         window.location.replace("/")
@@ -39,7 +34,7 @@ const UserProfile = (props) => {
           <Col xs={9}>
             <h3>{user.name}</h3>
             <Badge variant="secondary">Software Engineer</Badge>
-            {authorized? (<p>Password: {user.password}</p>):(null)}
+            {user.password}
           </Col>
         </Row>
       </Container>
