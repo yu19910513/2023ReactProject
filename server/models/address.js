@@ -28,7 +28,7 @@ Address.init(
       allowNull: true,
     },
     phone: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT(20),
       allowNull: true,
     },
     country: {

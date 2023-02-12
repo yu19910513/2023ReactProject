@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { User } = require("../../models");
+const { User, Address } = require("../../models");
 const { signToken, authenticate } = require("../../utils/auth");
 const bcrypt = require("bcrypt");
 const secret = process.env.ADMIN_SECRET;
@@ -66,7 +66,12 @@ router.post("/signup", (req, res) => {
 
 router.get("/owner/:id", authenticate, (req, res) => {
   try {
-    User.findByPk(req.params.id).then((user) => {
+    User.findByPk(req.params.id, {
+      include: [{
+        model: Address,
+        // as: 'address'
+      }]
+    }).then((user) => {
       if (!user) {
         return res.status(404).send({ message: "User not found" });
       }
