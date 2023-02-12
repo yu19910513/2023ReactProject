@@ -2,8 +2,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home/Home";
-import ProfilePage from "./pages/Profile/ProfilePage";
-import SignUp from "./pages/Signup/SignUp";
+import ProfilePage from "./pages/Profile/ProfilePage"
+import SignUp from "./pages/Signup/Signup";
 
 function App() {
   return (

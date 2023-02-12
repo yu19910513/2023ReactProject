@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Row, Col, Image, Badge } from "react-bootstrap";
-import NavbarComponent from "../../components/Navbar/NavbarComponent";
+import NavbarComponent from "../../components/NavBar/NavbarComponent";
 import userService from "../../services/UserService";
 import authService from "../../services/AuthService";
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import TestService from "../../services/TestService";
-import NavbarComponent from "../../components/Navbar/NavbarComponent";
+import NavbarComponent from "../../components/NavBar/NavbarComponent";
 import { Card, Container } from "react-bootstrap";
 
 const Home = () => {
