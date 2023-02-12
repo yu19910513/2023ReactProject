@@ -22,20 +22,5 @@ const signToken = ({ email, id, name, admin }) => {
   return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
 };
 
-const withAuth = (req, res, next) => {
-  if (!req.session.user_id) {
-    res.redirect("/login");
-  } else {
-    next();
-  }
-};
 
-const adminAuth = (req, res, next) => {
-  if (!req.session.admin) {
-    withAuth(req, res, next);
-  } else {
-    next();
-  }
-};
-
-module.exports = { withAuth, adminAuth, authenticate, signToken };
+module.exports = { authenticate, signToken };

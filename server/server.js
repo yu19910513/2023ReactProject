@@ -1,17 +1,17 @@
-const express = require('express');
+const express = require("express");
 const cors = require("cors");
-const routes = require('./controllers');
-const sequelize = require('./config/connection');
+const routes = require("./controllers");
+const sequelize = require("./config/connection");
 
-const session = require('express-session');
+const session = require("express-session");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const SequelizeStore = require('connect-session-sequelize')(session.Store);
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
 const sess = {
-  secret: 'dapeng',
+  secret: "dapeng",
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,
   },
@@ -19,11 +19,11 @@ const sess = {
   rolling: true,
   saveUninitialized: true,
   store: new SequelizeStore({
-    db: sequelize
+    db: sequelize,
   }),
 };
 var corsOptions = {
-  origin: "http://localhost:3000"
+  origin: "http://localhost:3000",
 };
 app.use(session(sess));
 app.use(cors(corsOptions));
@@ -32,7 +32,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(routes);
-
 
 // turn on connection to db and server
 sequelize.sync({ force: false }).then(() => {
