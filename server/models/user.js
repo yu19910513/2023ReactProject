@@ -18,39 +18,27 @@ User.init(
       primaryKey: true,
       autoIncrement: true,
     },
-
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-
     email: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
-
     password: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-
     admin: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    custom_1: {
-      type: DataTypes.STRING,
+    thumbnail: {
+      type: DataTypes.BLOB("medium"),
       allowNull: true,
-    },
-    custom_2: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    custom_3: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+    }
   },
   {
     hooks: {

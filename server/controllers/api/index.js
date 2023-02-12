@@ -1,22 +1,7 @@
 const router = require('express').Router();
-const userRoutes = require('./user_route');
-const boxRoutes = require('./box-route');
-const accountRoutes = require('./account-route');
-const batchRoutes = require('./batch-route');
-const containerRoutes = require('./container-route.js');
-const itemRoutes = require('./item-route');
-const recordRoutes = require('./record-route');
-const documentRoutes = require('./document-route');
-const testRoutes = require('./test-route');
-const user_routes = require('./user-routes');
+const testRoutes = require('./TestRoutes');
+const userRoutes = require('./UserRoutes');
 
-router.use('/user', user_routes);
-router.use('/box', boxRoutes);
-router.use('/account', accountRoutes);
-router.use('/batch', batchRoutes);
-router.use('/item', itemRoutes);
-router.use('/container', containerRoutes);
-router.use('/record', recordRoutes);
-router.use('/document', documentRoutes);
+router.use('/user', userRoutes);
 router.use("/test", testRoutes);
 module.exports = router;
