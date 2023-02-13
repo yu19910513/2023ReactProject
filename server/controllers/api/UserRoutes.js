@@ -1,8 +1,6 @@
 const router = require("express").Router();
 const { User, Address } = require("../../models");
 const { signToken, authenticate } = require("../../utils/auth");
-const sequelize = require("sequelize");
-const { Transaction } = require("sequelize");
 const bcrypt = require("bcrypt");
 const secret = process.env.ADMIN_SECRET;
 

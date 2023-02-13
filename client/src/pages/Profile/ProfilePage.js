@@ -13,7 +13,7 @@ const UserProfile = () => {
   const [updatedUser, setUpdatedUser] = useState({});
 
   useEffect(() => {
-    if (authService.isOwner(id)) {
+    if (authService.isOwner(id) || authService.isAdmin()) {
       userService
         .getOwner(id)
         .then((res) => {
@@ -41,8 +41,8 @@ const UserProfile = () => {
         phone: address.phone,
       });
       setEditing(true);
-    } else {
-      alert('Your sing-in token expired. Please log in again')
+    } else if (!authService.isAdmin()) {
+      alert("Your sing-in token expired. Please log in again");
       window.location.assign("/");
     }
   };

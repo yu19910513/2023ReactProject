@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TestService from "../../services/TestService";
 import NavbarComponent from "../../components/NavBar/NavbarComponent";
-import { Card, Container } from "react-bootstrap";
+import { Card, Container, Button } from "react-bootstrap";
 
 const Home = () => {
   const [users, setUsers] = useState([]);
@@ -38,6 +38,7 @@ const Home = () => {
                   <Card.Body>
                     <Card.Title>{user.name}</Card.Title>
                     <Card.Subtitle>ID: {user.id}</Card.Subtitle>
+                    <Button href={`/profile/${user.id}`} variant="primary">Profile</Button>
                   </Card.Body>
                 </Card>
               );

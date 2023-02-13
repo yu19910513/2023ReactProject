@@ -56,7 +56,7 @@ class AuthService {
   }
 
   isOwner(id) {
-    if (this.loggedIn() && (this.getUserId() == id || this.isAdmin())) {
+    if (this.loggedIn() && (this.getUserId() == id)) {
       return true;
     }
     return false;
