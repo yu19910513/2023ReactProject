@@ -11,7 +11,7 @@ Address.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    address: {
+    street: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -24,11 +24,11 @@ Address.init(
       allowNull: true,
     },
     zipCode: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: true,
     },
     phone: {
-      type: DataTypes.BIGINT(20),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     country: {

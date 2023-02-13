@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Row, Col, Image, Form } from "react-bootstrap";
+import { Container, Row, Col, Image, Form, Button } from "react-bootstrap";
 import NavbarComponent from "../../components/NavBar/NavbarComponent";
 import userService from "../../services/UserService";
 import authService from "../../services/AuthService";
@@ -10,40 +10,71 @@ const UserProfile = (props) => {
   const [user, setUser] = useState({});
   const [address, setAddress] = useState({});
   const [editing, setEditing] = useState(false);
+  const [updatedUser, setUpdatedUser] = useState({});
+  const dataFetch = (id) => {
+    userService
+      .getOwner(id)
+      .then((res) => {
+        setUser(res.data);
+        setAddress(res.data.address);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
   useEffect(() => {
     if (authService.isOwner(id)) {
-      userService
-        .getOwner(id)
-        .then((res) => {
-          setUser(res.data);
-          setAddress(res.data.address);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      dataFetch(id)
     } else {
       window.location.replace("/");
     }
   }, [id]);
 
-  const [updatedUser, setUpdatedUser] = useState({
-    name: user.name,
-    email: user.email,
-    admin: user.admin,
-    address: address.address,
-    city: address.city,
-    state: address.state,
-    zipCode: address.zipCode,
-    phone: address.phone,
-  });
 
   const handleEdit = () => {
+    setUpdatedUser({
+      name: user.name,
+      email: user.email,
+      admin: user.admin,
+      street: address.street,
+      city: address.city,
+      state: address.state,
+      zipCode: address.zipCode,
+      phone: address.phone,
+    });
     setEditing(true);
+  };
+
+  const handleCancel = () => {
+    setEditing(false);
+  };
+
+  const isFormValid = (data) => {
+    if (data.name.length > 0 && data.email.length > 0) {
+      return true;
+    }
+    return false;
   };
 
   const handleSave = () => {
     setEditing(false);
-    console.log(updatedUser);
+    const user = {
+      name: updatedUser.name,
+      email: updatedUser.email,
+      admin: updatedUser.admin,
+    };
+    const address = {
+      street: updatedUser.street,
+      city: updatedUser.city,
+      state: updatedUser.state,
+      zipCode: updatedUser.zipCode,
+      phone: updatedUser.phone,
+    };
+    if (userService.updateUser(user, address) != null) {
+      console.log("success");
+    } else {
+      console.log("fail");
+    }
   };
 
   const handleChange = (e) => {
@@ -60,7 +91,7 @@ const UserProfile = (props) => {
           <Col xs={12} md={9}>
             <h1>{user.name}'s Profile</h1>
             {editing ? (
-              <Form>
+              <Form onSubmit={handleSave}>
                 <Form.Group controlId="formName">
                   <Form.Label>Name</Form.Label>
                   <Form.Control
@@ -79,24 +110,27 @@ const UserProfile = (props) => {
                     onChange={handleChange}
                   />
                 </Form.Group>
-                <Form.Group controlId="formAdmin">
-                  <Form.Label>Admin Privilege</Form.Label>
-                  <Form.Control
-                    as="select"
-                    name="admin"
-                    value={updatedUser.admin}
-                    onChange={handleChange}
-                  >
-                    <option value={true}>Yes</option>
-                    <option value={false}>No</option>
-                  </Form.Control>
-                </Form.Group>
-                <Form.Group controlId="formAddress">
-                  <Form.Label>Address</Form.Label>
+                {authService.isAdmin() ? (
+                  <Form.Group controlId="formAdmin">
+                    <Form.Label>Admin Privilege</Form.Label>
+                    <Form.Control
+                      as="select"
+                      name="admin"
+                      value={updatedUser.admin}
+                      onChange={handleChange}
+                    >
+                      <option value={true}>Yes</option>
+                      <option value={false}>No</option>
+                    </Form.Control>
+                  </Form.Group>
+                ) : null}
+
+                <Form.Group controlId="formStreet">
+                  <Form.Label>Street</Form.Label>
                   <Form.Control
                     type="text"
-                    name="address"
-                    value={updatedUser.address}
+                    name="street"
+                    value={updatedUser.street}
                     onChange={handleChange}
                   />
                 </Form.Group>
@@ -136,13 +170,27 @@ const UserProfile = (props) => {
                     onChange={handleChange}
                   />
                 </Form.Group>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={!isFormValid(updatedUser)}
+                >
+                  Submit
+                </Button>
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </Button>
               </Form>
             ) : (
               <>
                 <p onClick={handleEdit}>Name: {user.name}</p>
                 <p>Email: {user.email}</p>
                 <p>Admin Privilege: {user.admin ? "Yes" : "No"}</p>
-                <p>Address: {address.address}</p>
+                <p>Street: {address.street}</p>
                 <p>City: {address.city}</p>
                 <p>State: {address.state}</p>
                 <p>Zip Code: {address.zipCode}</p>

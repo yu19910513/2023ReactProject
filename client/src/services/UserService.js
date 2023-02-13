@@ -2,15 +2,6 @@ import http from "../common/http-common";
 import authService from "./AuthService";
 
 class UserService {
-
-  getProfile(id) {
-    return http.get(`/user/profile/${id}`, {
-      headers: {
-        Authorization: `Bearer ${authService.getToken()}`,
-      },
-    });
-  }
-
   getOwner(id) {
     return http.get(`/user/owner/${id}`, {
       headers: {
@@ -19,14 +10,19 @@ class UserService {
     });
   }
 
-  isOwner(id) {
-    this.getOwner(id)
-      .then((res) => {
-        return true;
-      })
-      .catch((error) => {
-        return false;
+  updateUser(user, address) {
+    const body = {
+      user,
+      address,
+    };
+    try {
+      return http.put(`/user/updateUserData`, body, {
+        headers: { Authorization: `Bearer ${authService.getToken()}` },
       });
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   }
 }
 
