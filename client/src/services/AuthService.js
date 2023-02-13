@@ -31,8 +31,12 @@ class AuthService {
   }
 
   signIn(data) {
-    localStorage.setItem("token", data.token);
+    this.saveToken(data.token);
     window.location.assign(`/profile/${this.getUserId()}`);
+  }
+
+  saveToken(token) {
+    localStorage.setItem("token", token);
   }
 
   /**
@@ -44,7 +48,7 @@ class AuthService {
   }
 
   getUserId() {
-    return parseInt(this.getProfile().data.id);
+    return this.getProfile().data.id;
   }
 
   getAdmin() {
@@ -52,7 +56,7 @@ class AuthService {
   }
 
   isOwner(id) {
-    if (this.loggedIn() && (this.getUserId() === parseInt(id) || this.isAdmin())) {
+    if (this.loggedIn() && (this.getUserId() == id || this.isAdmin())) {
       return true;
     }
     return false;

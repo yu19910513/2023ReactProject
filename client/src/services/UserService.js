@@ -15,14 +15,23 @@ class UserService {
       user,
       address,
     };
-    try {
-      return http.put(`/user/updateUserData`, body, {
+    http
+      .put(`/user/updateUserData`, body, {
         headers: { Authorization: `Bearer ${authService.getToken()}` },
+      })
+      .then((res) => {
+        if (res.status != 200) {
+          alert("Fail");
+          window.location.assign("/");
+        }
+        authService.saveToken(res.data.token);
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("Operation invalid. Please log in and try again.");
+        window.location.assign("/");
+        return 0;
       });
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
   }
 }
 

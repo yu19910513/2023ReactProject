@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const { User, Address } = require("../../models");
 const { signToken, authenticate } = require("../../utils/auth");
+const sequelize = require("sequelize");
+const { Transaction } = require("sequelize");
 const bcrypt = require("bcrypt");
-// const { log } = require("util");
 const secret = process.env.ADMIN_SECRET;
 
 router.post("/login", async (req, res) => {
@@ -43,31 +44,6 @@ router.post("/signup", (req, res) => {
   }
 });
 
-// router.get('/profile/:id', (req, res) => {
-//   const token = req.headers.authorization.split(' ')[1];
-//   try {
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     User.findByPk(req.params.id)
-//       .then(user => {
-//         if (!user) {
-//           return res.status(404).send({ message: 'User not found' });
-//         }
-//         if (user.id !== decoded.id) {
-//           return res.status(401).send({ message: 'Unauthorized access' });
-//         }
-//         res.send({
-//           id: user.id,
-//           name: user.name,
-//           username: user.username,
-//           password: user.password
-//         });
-//       });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(401).send({ message: 'Unauthorized access' });
-//   }
-// });
-
 router.get("/owner/:id", authenticate, (req, res) => {
   try {
     User.findByPk(req.params.id, {
@@ -92,55 +68,57 @@ router.get("/owner/:id", authenticate, (req, res) => {
   }
 });
 
-router.put("/updateUserData", authenticate, (req, res) => {
-  User.update(
-    {
-      name: req.body.user.name,
-      email: req.body.user.email,
-      admin: req.body.user.admin,
-    },
-    {
-      where: {
-        id: req.token.data.id,
+router.put("/updateUserData", authenticate, async (req, res) => {
+  try {
+    const user = await User.update(
+      {
+        name: req.body.user.name,
+        email: req.body.user.email,
+        admin: req.body.user.admin,
       },
-    }
-  )
-    .then((user) => {
-      if (!user) {
-        return res.status(404).json({ message: "No user found with this id" });
-      }
-    })
-    .then(() => {
-      const address = req.body.address;
-      Address.update(
-        {
-          street: address.street,
-          city: address.city,
-          state: address.state,
-          zipCode: address.zipCode,
-          phone: address.phone
+      {
+        where: {
+          id: req.token.data.id,
         },
-        {
-          where: {
-            user_id: req.token.data.id,
-          },
-        }
-      ).then(() => {
-        res.status(200).send({
-          message: "User and address data updated successfully",
-        });
-      });
-    });
-});
+      }
+    );
+    const address = await Address.update(
+      {
+        street: req.body.address.street,
+        city: req.body.address.city,
+        state: req.body.address.state,
+        zipCode: req.body.address.zipCode,
+        phone: req.body.address.phone,
+      },
+      {
+        where: {
+          user_id: req.token.data.id,
+        },
+      }
+    );
+    if (!user) {
+      return res.status(404).json({ message: "No user found with this id" });
+    }
 
-// router.get("/:id", async (req, res) => {
-//   try {
-//     const user = await User.findByPk(req.params.id);
-//     if (!user) return res.status(400).send("User not found");
-//     res.send(user);
-//   } catch (error) {
-//     res.status(500).send(error.message);
-//   }
-// });
+    if (!address) {
+      return res
+        .status(404)
+        .json({ message: "No address found with this user" });
+    }
+
+    if (user && address) {
+      const newTokenRaw = await User.findByPk(req.token.data.id);
+      const newToken = newTokenRaw.get({plain: true});
+      const token = signToken(newToken);
+      res.status(200).send({
+        message: "User and address data updated successfully",
+        token,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: "System Error" });
+  }
+});
 
 module.exports = router;

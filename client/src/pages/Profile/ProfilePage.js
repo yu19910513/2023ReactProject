@@ -5,44 +5,46 @@ import NavbarComponent from "../../components/NavBar/NavbarComponent";
 import userService from "../../services/UserService";
 import authService from "../../services/AuthService";
 
-const UserProfile = (props) => {
+const UserProfile = () => {
   const { id } = useParams();
   const [user, setUser] = useState({});
   const [address, setAddress] = useState({});
   const [editing, setEditing] = useState(false);
   const [updatedUser, setUpdatedUser] = useState({});
-  const dataFetch = (id) => {
-    userService
-      .getOwner(id)
-      .then((res) => {
-        setUser(res.data);
-        setAddress(res.data.address);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+
   useEffect(() => {
     if (authService.isOwner(id)) {
-      dataFetch(id)
+      userService
+        .getOwner(id)
+        .then((res) => {
+          setUser(res.data);
+          setAddress(res.data.address);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     } else {
       window.location.replace("/");
     }
   }, [id]);
 
-
   const handleEdit = () => {
-    setUpdatedUser({
-      name: user.name,
-      email: user.email,
-      admin: user.admin,
-      street: address.street,
-      city: address.city,
-      state: address.state,
-      zipCode: address.zipCode,
-      phone: address.phone,
-    });
-    setEditing(true);
+    if (authService.isOwner(id)) {
+      setUpdatedUser({
+        name: user.name,
+        email: user.email,
+        admin: user.admin,
+        street: address.street,
+        city: address.city,
+        state: address.state,
+        zipCode: address.zipCode,
+        phone: address.phone,
+      });
+      setEditing(true);
+    } else {
+      alert('Your sing-in token expired. Please log in again')
+      window.location.assign("/");
+    }
   };
 
   const handleCancel = () => {
@@ -70,11 +72,9 @@ const UserProfile = (props) => {
       zipCode: updatedUser.zipCode,
       phone: updatedUser.phone,
     };
-    if (userService.updateUser(user, address) != null) {
-      console.log("success");
-    } else {
-      console.log("fail");
-    }
+    userService.updateUser(user, address);
+    setUser(user);
+    setAddress(address);
   };
 
   const handleChange = (e) => {
