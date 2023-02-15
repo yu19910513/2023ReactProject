@@ -30,7 +30,6 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(routes);
 
 // turn on connection to db and server
