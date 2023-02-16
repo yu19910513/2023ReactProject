@@ -20,6 +20,11 @@ const Home = () => {
         setState("error");
         setError(err);
       });
+      TestService.testPython().then((res) => {
+        console.log(res);
+      }).catch((err) => {
+        console.error("Error:", err);
+      })
   }, []);
 
   if (state === "error") return <h1>{error.toString()}</h1>;

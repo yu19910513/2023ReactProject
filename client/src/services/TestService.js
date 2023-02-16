@@ -1,8 +1,13 @@
-import http from "../common/http-common";
+import axios from "axios";
+import http from "../common/NodeCommon";
+import http2 from "../common/PythonCommon";
 
 class TestService {
   getAll() {
     return http.get("/test");
+  }
+  testPython() {
+    return http2.get("/")
   }
 
   get(id) {

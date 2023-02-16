@@ -1,5 +1,5 @@
 import decode from "jwt-decode";
-import http from "../common/http-common";
+import http from "../common/NodeCommon";
 
 class AuthService {
   getProfile() {

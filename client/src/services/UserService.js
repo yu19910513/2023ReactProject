@@ -1,4 +1,4 @@
-import http from "../common/http-common";
+import http from "../common/NodeCommon";
 import authService from "./AuthService";
 
 class UserService {
