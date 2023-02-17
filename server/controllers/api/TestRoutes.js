@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const {User} = require('../../models');
 
+//GET
 router.get('/', async (req, res) => {
     try {
     const userDB = await User.findAll({
@@ -19,5 +20,5 @@ router.get('/', async (req, res) => {
       res.status(500).json(err);
     }
 });
-
+////
 module.exports = router;

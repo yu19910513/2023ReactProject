@@ -4,6 +4,32 @@ const { signToken, authenticate } = require("../../utils/auth");
 const bcrypt = require("bcrypt");
 const secret = process.env.ADMIN_SECRET;
 
+//GET
+router.get("/owner/:id", authenticate, (req, res) => {
+  try {
+    User.findByPk(req.params.id, {
+      include: [
+        {
+          model: Address,
+        },
+      ],
+    }).then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "User not found" });
+      }
+      console.log(req.token);
+      if (user.id !== req.token.data.id && !req.token.data.admin) {
+        return res.status(401).send({ message: `Unauthorized access` });
+      }
+      res.send(user);
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: "Unauthorized access" });
+  }
+});
+////
+//POST
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -41,31 +67,8 @@ router.post("/signup", (req, res) => {
     res.status(500).json(err);
   }
 });
-
-router.get("/owner/:id", authenticate, (req, res) => {
-  try {
-    User.findByPk(req.params.id, {
-      include: [
-        {
-          model: Address,
-        },
-      ],
-    }).then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: "User not found" });
-      }
-      console.log(req.token);
-      if (user.id !== req.token.data.id && !req.token.data.admin) {
-        return res.status(401).send({ message: `Unauthorized access` });
-      }
-      res.send(user);
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send({ message: "Unauthorized access" });
-  }
-});
-
+////
+//PUT
 router.put("/updateUserData", authenticate, async (req, res) => {
   try {
     const user = await User.update(
@@ -106,7 +109,7 @@ router.put("/updateUserData", authenticate, async (req, res) => {
 
     if (user && address) {
       const newTokenRaw = await User.findByPk(req.token.data.id);
-      const newToken = newTokenRaw.get({plain: true});
+      const newToken = newTokenRaw.get({ plain: true });
       const token = signToken(newToken);
       res.status(200).send({
         message: "User and address data updated successfully",
@@ -118,5 +121,5 @@ router.put("/updateUserData", authenticate, async (req, res) => {
     return res.status(500).send({ message: "System Error" });
   }
 });
-
+////
 module.exports = router;
