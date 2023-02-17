@@ -1,10 +1,9 @@
+from typing import List, Type
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from sqlalchemy.orm import sessionmaker
 from models.user import Base, User
 from config.connection import engine
-
-
 
 
 app = Flask(__name__)
@@ -15,12 +14,12 @@ Base.metadata.create_all(engine)
 
 
 @app.route('/users', methods=['GET'])
-def get_users():
-    users = User.query.all()
-    return jsonify({'users': [user.serialize for user in users]})
+def get_users() -> dict[str, List[Type[User]]]:
+     users = session.query(User).all()
+     return jsonify({'users': [user.serialize for user in users]})
 
 @app.route('/users', methods=['POST'])
-def create_user():
+def create_user() -> str:
     data = request.get_json()
     user = User(**data)
     user.save()
