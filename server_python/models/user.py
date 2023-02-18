@@ -1,9 +1,11 @@
 from sqlalchemy import Column, Integer, String, Boolean, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
-import bcrypt
 import base64
 from sqlalchemy.orm import Query
 from typing import TypeVar, Type
+from bcrypt import hashpw, gensalt
+from flask_sqlalchemy import SQLAlchemy
+import os
 
 Base = declarative_base()
 T = TypeVar('T', bound='User')
@@ -14,6 +16,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     email = Column(String(120), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False)
     admin = Column(Boolean, default=False)
     thumbnail = Column(LargeBinary, nullable=True)
 
@@ -21,11 +24,13 @@ class User(Base):
     def query(cls: Type[T]) -> Query[T]:
         return Query[T](cls)
 
-    def __init__(self, email, password, admin=False, thumbnail=None):
+    def __init__(self, name, email, password, confirmedPassword, adminSecret):
         self.email = email
-        self.password = bcrypt.generate_password_hash(password)
-        self.admin = admin
-        self.thumbnail = thumbnail
+        self.password = hashpw(str.encode(password), gensalt())
+        self.name = name
+        if adminSecret == os.getenv('ADMIN_SECRET'): self.admin = True
+        else: self.admin = False
+        self.thumbnail = None
 
     @property
     def serialize(self):
@@ -33,6 +38,7 @@ class User(Base):
             'id': self.id,
             'email': self.email,
             'admin': self.admin,
+            'name': self.name,
             'thumbnail': base64.b64encode(self.thumbnail).decode('utf-8') if self.thumbnail else None
         }
 

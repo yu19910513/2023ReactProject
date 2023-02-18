@@ -1,9 +1,9 @@
 from typing import List, Type
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+from flask import Flask, jsonify, request #import reuqest to allow HTTP request to flow in
+from flask_cors import CORS #allow cross-origin access
 from sqlalchemy.orm import sessionmaker
-from models.user import Base, User
-from config.connection import engine
+from models.user import Base, User #import Base containing all models e.g. User
+from config.connection import engine #engine to connect with MySQL database
 
 
 app = Flask(__name__)
@@ -18,11 +18,12 @@ def get_users() -> dict[str, List[Type[User]]]:
      users = session.query(User).all()
      return jsonify({'users': [user.serialize for user in users]})
 
-@app.route('/users', methods=['POST'])
+@app.route('/api/user/signUp', methods=['POST'])
 def create_user() -> str:
     data = request.get_json()
-    user = User(**data)
-    user.save()
+    user = User(**data)# *=unpack list or linear array; **=unpack objects
+    session.add(user)
+    session.commit()
     return jsonify(user.serialize)
 
 @app.route('/')

@@ -1,5 +1,6 @@
 import decode from "jwt-decode";
 import http from "../common/NodeCommon";
+import http2 from "../common/PythonCommon"
 
 class AuthService {
   getProfile() {
@@ -74,6 +75,7 @@ class AuthService {
   }
 
   signUp(data) {
+    return http2.post("/user/signUp", data);
     return http.post("/user/signUp", data);
   }
 
