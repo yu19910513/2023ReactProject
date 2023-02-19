@@ -2,6 +2,11 @@ const router = require("express").Router();
 const { User, Address } = require("../../models");
 const { signToken, authenticate } = require("../../utils/auth");
 const bcrypt = require("bcrypt");
+const multer = require("multer");
+const { uploadThumbnail, uploadFile_admin } = require("../../utils/s3_file");
+const fs = require("fs");
+const path = require("path");
+const upload = multer({ dest: "./uploads/" });
 const secret = process.env.ADMIN_SECRET;
 
 //GET
@@ -121,5 +126,34 @@ router.put("/updateUserData", authenticate, async (req, res) => {
     return res.status(500).send({ message: "System Error" });
   }
 });
+
+router.put("/updateProfilePicture", authenticate, upload.single("file"), async (req, res) => {
+  try {
+    const data = fs.readFileSync(req.file.path);
+    fs.unlinkSync(req.file.path);
+    const image = await User.update(
+      {
+        thumbnail: data,
+      },
+      {
+        where: {
+          id: req.token.data.id,
+        },
+      }
+    );
+    res.status(200).json({
+      success: true,
+      message: "Image uploaded successfully.",
+      data: image,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to upload image.",
+      error: err.message,
+    });
+  }
+});
+
 ////
 module.exports = router;

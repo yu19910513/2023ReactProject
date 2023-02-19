@@ -28,4 +28,9 @@ function getFile_admin (fileKey) {
   }
   return s3.getObject(downloadParams).createReadStream()
 };
-module.exports = {uploadFile_admin, getFile_admin};
+
+function uploadThumbnail (image) {
+  const fileStream = fs.createReadStream(image.path)
+  return fileStream
+}
+module.exports = {uploadFile_admin, getFile_admin, uploadThumbnail};

@@ -33,6 +33,25 @@ class UserService {
         return 0;
       });
   }
+
+  updateProfilePicture(formData) {
+    http
+      .put("/user/updateProfilePicture", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${authService.getToken()}`,
+        },
+      })
+      .then((response) => {
+        if (response.status == 200){
+          window.location.reload();
+        }
+      })
+      .catch((error) => {
+        alert("failed")
+        console.log(error);
+      });
+  }
 }
 
 const userService = new UserService();

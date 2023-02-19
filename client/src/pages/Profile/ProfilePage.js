@@ -4,6 +4,7 @@ import { Container, Row, Col, Image, Form, Button } from "react-bootstrap";
 import NavbarComponent from "../../components/NavBar/NavbarComponent";
 import userService from "../../services/UserService";
 import authService from "../../services/AuthService";
+import ProfileThumbnail from "./ProfileThumbnail";
 
 const UserProfile = () => {
   const { id } = useParams();
@@ -85,9 +86,7 @@ const UserProfile = () => {
       <NavbarComponent />
       <Container>
         <Row>
-          <Col xs={12} md={3}>
-            <Image src={user.thumbnail} thumbnail />
-          </Col>
+          <ProfileThumbnail user={user}/>
           <Col xs={12} md={9}>
             <h1>{user.name}'s Profile</h1>
             {editing ? (
