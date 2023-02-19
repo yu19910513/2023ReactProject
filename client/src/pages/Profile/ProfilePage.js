@@ -24,7 +24,9 @@ const UserProfile = () => {
           const bufferData = userData.thumbnail;
           setUser(userData);
           setAddress(addressData);
-          setBufferData(bufferData.data);
+          if (bufferData) {
+            setBufferData(bufferData.data);
+          }
         })
         .catch((error) => {
           console.error(error);

@@ -6,6 +6,7 @@ import Logo from "../../media/logo.png";
 const ProfileThumbnail = (imgData) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [hasProfile, setProfile] = useState(false);
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
@@ -24,8 +25,10 @@ const ProfileThumbnail = (imgData) => {
   const [imageSrc, setImageSrc] = useState("");
 
   useEffect(() => {
-    if (imgData) {
-      const content = new Uint8Array(imgData.bufferData)
+    const hasImage = imgData.bufferData[1];
+    if (hasImage) {
+      setProfile(true);
+      const content = new Uint8Array(imgData.bufferData);
       const blob = new Blob([content.buffer], { type: "image/jpeg" });
       const urlCreator = window.URL || window.webkitURL;
       const imageUrl = urlCreator.createObjectURL(blob);
@@ -35,10 +38,10 @@ const ProfileThumbnail = (imgData) => {
 
   return (
     <Col xs={12} md={3}>
-      {imgData == null ? (
-        <Image src={Logo} onClick={handleShowModal} thumbnail />
-      ) : (
+      {hasProfile ? (
         <Image src={imageSrc} onClick={handleShowModal} thumbnail />
+      ) : (
+        <Image src={Logo} onClick={handleShowModal} thumbnail />
       )}
 
       <Modal show={showModal} onHide={handleCloseModal}>
