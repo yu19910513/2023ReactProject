@@ -10,6 +10,7 @@ const UserProfile = () => {
   const { id } = useParams();
   const [user, setUser] = useState({});
   const [address, setAddress] = useState({});
+  const [bufferData, setBufferData] = useState([]);
   const [editing, setEditing] = useState(false);
   const [updatedUser, setUpdatedUser] = useState({});
 
@@ -18,8 +19,12 @@ const UserProfile = () => {
       userService
         .getOwner(id)
         .then((res) => {
-          setUser(res.data);
-          setAddress(res.data.address);
+          const userData = res.data;
+          const addressData = userData.address;
+          const bufferData = userData.thumbnail;
+          setUser(userData);
+          setAddress(addressData);
+          setBufferData(bufferData.data);
         })
         .catch((error) => {
           console.error(error);
@@ -86,7 +91,7 @@ const UserProfile = () => {
       <NavbarComponent />
       <Container>
         <Row>
-          <ProfileThumbnail user={user}/>
+          <ProfileThumbnail bufferData={bufferData} />
           <Col xs={12} md={9}>
             <h1>{user.name}'s Profile</h1>
             {editing ? (

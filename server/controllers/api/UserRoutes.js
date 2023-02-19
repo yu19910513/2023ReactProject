@@ -3,7 +3,6 @@ const { User, Address } = require("../../models");
 const { signToken, authenticate } = require("../../utils/auth");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
-const { uploadThumbnail, uploadFile_admin } = require("../../utils/s3_file");
 const fs = require("fs");
 const path = require("path");
 const upload = multer({ dest: "./uploads/" });

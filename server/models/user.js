@@ -36,7 +36,7 @@ User.init(
       defaultValue: false,
     },
     thumbnail: {
-      type: DataTypes.BLOB("medium"),
+      type: DataTypes.BLOB("long"),
       allowNull: true,
     }
   },
