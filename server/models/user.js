@@ -38,7 +38,7 @@ User.init(
     thumbnail: {
       type: DataTypes.BLOB("long"),
       allowNull: true,
-    }
+    },
   },
   {
     hooks: {
